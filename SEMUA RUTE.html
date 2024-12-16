@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traveling Salesman Problem</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Traveling Salesman Problem</h1>
+    
+    <!-- Graphs -->
+    <h2>RUTE TERPENDEK: U -> Z -> W -> V -> X -> Y -> U (188)</h2>
+    <canvas id="graphCanvas1" width="600" height="600"></canvas>
+
+    <!-- Second Graph -->
+    <h2>RUTE: U -> Y -> Z -> W -> X -> V -> U (193)</h2>
+    <canvas id="graphCanvas2" width="600" height="600"></canvas>
+
+    <!-- Three Graph -->
+    <h2>RUTE: U -> Y -> Z -> W -> V -> X -> U (210)</h2>
+    <canvas id="graphCanvas3" width="600" height="600"></canvas>
+
+    <!-- Four Graph -->
+    <h2>Route: U -> W -> Z -> Y -> V -> X -> U (216)</h2>
+    <canvas id="graphCanvas4" width="600" height="600"></canvas>
+
+    <!-- Five Graph -->
+    <h2>Route: U -> W -> Z -> Y -> X -> V -> U (217)</h2>
+    <canvas id="graphCanvas5" width="600" height="600"></canvas>
+
+    <!-- Six Graph -->
+    <h2>Route: U -> X -> V -> Y -> W -> Z -> U (237)</h2>
+    <canvas id="graphCanvas6" width="600" height="600"></canvas>
+
+    <!-- Seven Graph -->
+    <h2>Route: U -> X -> V -> Y -> Z -> W -> U (237)</h2>
+    <canvas id="graphCanvas7" width="600" height="600"></canvas>
+
+    <!-- Eight Graph -->
+    <h2>Route: U -> Z -> W -> V -> Y -> X -> U (237)</h2>
+    <canvas id="graphCanvas8" width="600" height="600"></canvas>
+
+    <!-- Nine Graph -->
+    <h2>Route: U -> V -> X -> Y -> Z -> W -> U (238)</h2>
+    <canvas id="graphCanvas9" width="600" height="600"></canvas>
+
+    <!-- Ten Graph -->
+    <h2>Route: U -> V -> X -> Y -> W -> Z -> U (238)</h2>
+    <canvas id="graphCanvas10" width="600" height="600"></canvas>
+  
+
+    <script>
+        // Function to draw a graph
+        function drawGraph(canvasId, nodes, edges, nodeColor) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext("2d");
+
+            function drawNode(ctx, label, x, y) {
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fillStyle = nodeColor;
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = "black";
+                ctx.font = "14px Arial";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(label, x, y);
+            }
+
+            function drawEdge(ctx, x1, y1, x2, y2, weight) {
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                const midX = (x1 + x2) / 2;
+                const midY = (y1 + y2) / 2;
+                ctx.fillStyle = "red";
+                ctx.font = "12px Arial";
+                ctx.fillText(weight, midX, midY);
+            }
+
+            edges.forEach(([start, end, weight]) => {
+                drawEdge(ctx, nodes[start].x, nodes[start].y, nodes[end].x, nodes[end].y, weight);
+            });
+
+            for (const [label, position] of Object.entries(nodes)) {
+                drawNode(ctx, label, position.x, position.y);
+            }
+        }
+
+        // Data for graphs
+        const nodes = {
+            U: { x: 300, y: 50 },
+            V: { x: 100, y: 150 },
+            W: { x: 500, y: 150 },
+            X: { x: 100, y: 450 },
+            Y: { x: 500, y: 450 },
+            Z: { x: 300, y: 550 }
+        };
+
+        const graphData = [
+            {
+                canvasId: "graphCanvas1",
+                edges: [
+                    ["U", "Z", 35],
+                    ["Z", "W", 21],
+                    ["W", "V", 61],
+                    ["V", "X", 51],
+                    ["X", "Y", 61],
+                    ["Y", "U", 2]
+                ],
+                color: "lightblue"
+            },
+            {
+                canvasId: "graphCanvas2",
+                edges: [
+                    ["U", "Y", 2],
+                    ["Y", "Z", 36],
+                    ["Z", "W", 21],
+                    ["W", "X", 70],
+                    ["X", "V", 13],
+                    ["V", "U", 51]
+                ],
+                color: "lightgreen"
+            },
+            {
+                canvasId: "graphCanvas3",
+                edges: [
+                    ["U", "Y", 2],
+                    ["Y", "Z", 36],
+                    ["Z", "W", 21],
+                    ["W", "V", 78],
+                    ["V", "X", 13],
+                    ["X", "U", 60]
+                ],
+                color: "lightcoral"
+            },
+            {
+                canvasId: "graphCanvas4",
+                edges: [
+                ["U", "W", 35],
+                ["W", "Z", 21],
+                ["Z", "Y", 36],
+                ["Y", "V", 51],
+                ["V", "X", 13],
+                ["X", "U", 60]
+                   
+                ],
+                color: "red"
+            },
+            {
+                canvasId: "graphCanvas5",
+                edges: [
+                ["U", "W", 35],
+                ["W", "Z", 21],
+                ["Z", "Y", 36],
+                ["Y", "X", 61],
+                ["X", "V", 13],
+                ["V", "U", 51]
+                   
+                ],
+                color: "lightyellow"
+            },
+            {
+                canvasId: "graphCanvas6",
+                edges: [
+                ["U", "X", 60],
+                ["X", "V", 13],
+                ["V", "Y", 51],
+                ["Y", "W", 57],
+                ["W", "Z", 21],
+                ["Z", "U", 35]
+
+                ],
+                color: "purple"
+            },
+            {
+                canvasId: "graphCanvas7",
+                edges: [
+                ["U", "X", 60],
+                ["X", "V", 13],
+                ["V", "Y", 51],
+                ["Y", "Z", 36],
+                ["Z", "W", 21],
+                ["W", "U", 56]
+                   
+                ],
+                color: "purple"
+            },
+            {
+                canvasId: "graphCanvas8",
+                edges: [
+                ["U", "Z", 35],
+                ["Z", "W", 21],
+                ["W", "V", 56],
+                ["V", "Y", 51],
+                ["Y", "X", 61],
+                ["X", "U", 13]
+
+                ],
+                color: "purple"
+            },
+            {
+                canvasId: "graphCanvas9",
+                edges: [
+                ["U", "V", 51],
+                ["V", "X", 13],
+                ["X", "Y", 61],
+                ["Y", "Z", 36],
+                ["Z", "W", 21],
+                ["W", "U", 56]
+                   
+                ],
+                color: "grey"
+            },
+            {
+                canvasId: "graphCanvas10",
+                edges: [
+                ["U", "V", 51],
+                ["V", "X", 13],
+                ["X", "Y", 61],
+                ["Y", "W", 56],
+                ["W", "Z", 21],
+                ["Z", "U", 35]
+                   
+                ],
+                color: "grey"
+            }
+        ];
+
+        // Draw graphs
+        graphData.forEach(({ canvasId, edges, color }) => {
+            drawGraph(canvasId, nodes, edges, color);
+        });
+    </script>
+</body>
+</html>

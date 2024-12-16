@@ -1,0 +1,236 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traveling Salesman Problem</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            margin: 20px auto;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .tree {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .tree ul {
+            padding-top: 20px; position: relative;
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+        }
+        .tree li {
+            float: left; text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 5px 0 5px;
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+        }
+        .tree li::before, .tree li::after{
+            content: '';
+            position: absolute; top: 0; right: 50%;
+            border-top: 1px solid #ccc;
+            width: 50%; height: 20px;
+        }
+        .tree li::after{
+            right: auto; left: 50%;
+            border-left: 1px solid #ccc;
+        }
+        .tree li:only-child::after, .tree li:only-child::before {
+            display: none;
+        }
+        .tree li:only-child{ padding-top: 0;}
+        .tree li:first-child::before, .tree li:last-child::after{
+            border: 0 none;
+        }
+        .tree li:last-child::before{
+            border-right: 1px solid #ccc;
+            border-radius: 0 5px 0 0;
+            -webkit-border-radius: 0 5px 0 0;
+            -moz-border-radius: 0 5px 0 0;
+        }
+        .tree li:first-child::after{
+            border-radius: 5px 0 0 0;
+            -webkit-border-radius: 5px 0 0 0;
+            -moz-border-radius: 5px 0 0 0;
+        }
+        .tree ul ul::before{
+            content: '';
+            position: absolute; top: 0; left: 50%;
+            border-left: 1px solid #ccc;
+            width: 0; height: 20px;
+        }
+        .tree li a{
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            text-decoration: none;
+            color: #666;
+            font-family: arial, verdana, tahoma;
+            font-size: 11px;
+            display: inline-block;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+            transition: all 0.5s;
+            -webkit-transition: all 0.5s;
+            -moz-transition: all 0.5s;
+        }
+        .tree li a:hover, .tree li a:hover+ul li a {
+            background: #c8e4f8; color: #000; border: 1px solid #94a0b4;
+        }
+        .tree li a:hover+ul li::after, 
+        .tree li a:hover+ul li::before, 
+        .tree li a:hover+ul::before, 
+        .tree li a:hover+ul ul::before{
+            border-color:  #94a0b4;
+        }
+        .xy{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+    <div class="tree">
+        <ul><li><a href="">U</a>
+        <ul>
+        <li>
+            <a href="#">U,V<br>168</a>     
+                    </li>
+                    <li>
+                        <a href="#">U,W<br>140</a>
+                        <ul>
+                            <li><a href="#">U,W,V<br>113</a></li>
+                            <li><a href="#">U,W,X<br>105</a></li>
+                            <li><a href="#">U,W,Y<br>92</a></li>
+                            <li><a href="#">U,W,Z<br>56</a>
+                                <ul>
+                                    <li><a href="#">U,W,Z,V<br>124</a></li>
+                                    <li><a href="#">U,W,Z,X<br>124</a></li>
+                                    <li><a href="#">U,W,Z,Y<br>92</a>
+                                        <ul>
+                                            <li><a href="#">{U,W,Z,Y,V}<br>U,W,Z,Y,V,U<br>216</a></li>
+                                            <li><a href="#">{U,W,Z,Y,Z}<br>U,W,Z,Y,Z,V,U<br>217</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a href="#">U,X<br>168</a></li>
+                    <li><a href="#">U,Y<br>106</a></li>
+                    <li><a href="#">U,Z<br>140</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>
+
+  <!-- Four Graph -->
+  <h2>Route: U -> W -> Z -> Y -> V -> X -> U (216)</h2>
+  <canvas id="graphCanvas4" width="600" height="600"></canvas>
+
+  <!-- Five Graph -->
+  <h2>Route: U -> W -> Z -> Y -> X -> V -> U (217)</h2>
+  <canvas id="graphCanvas5" width="600" height="600"></canvas>
+
+
+ <script>
+     // Function to draw a graph
+     function drawGraph(canvasId, nodes, edges, nodeColor) {
+         const canvas = document.getElementById(canvasId);
+         const ctx = canvas.getContext("2d");
+
+         function drawNode(ctx, label, x, y) {
+             ctx.beginPath();
+             ctx.arc(x, y, 20, 0, Math.PI * 2);
+             ctx.fillStyle = nodeColor;
+             ctx.fill();
+             ctx.stroke();
+             ctx.fillStyle = "black";
+             ctx.font = "14px Arial";
+             ctx.textAlign = "center";
+             ctx.textBaseline = "middle";
+             ctx.fillText(label, x, y);
+         }
+
+         function drawEdge(ctx, x1, y1, x2, y2, weight) {
+             ctx.beginPath();
+             ctx.moveTo(x1, y1);
+             ctx.lineTo(x2, y2);
+             ctx.strokeStyle = "black";
+             ctx.lineWidth = 2;
+             ctx.stroke();
+
+             const midX = (x1 + x2) / 2;
+             const midY = (y1 + y2) / 2;
+             ctx.fillStyle = "red";
+             ctx.font = "12px Arial";
+             ctx.fillText(weight, midX, midY);
+         }
+
+         edges.forEach(([start, end, weight]) => {
+             drawEdge(ctx, nodes[start].x, nodes[start].y, nodes[end].x, nodes[end].y, weight);
+         });
+
+         for (const [label, position] of Object.entries(nodes)) {
+             drawNode(ctx, label, position.x, position.y);
+         }
+     }
+
+     // Data for graphs
+     const nodes = {
+         U: { x: 300, y: 50 },
+         V: { x: 100, y: 150 },
+         W: { x: 500, y: 150 },
+         X: { x: 100, y: 450 },
+         Y: { x: 500, y: 450 },
+         Z: { x: 300, y: 550 }
+     };
+
+     const graphData = [
+         {
+             canvasId: "graphCanvas4",
+             edges: [
+                ["U", "W", 35],
+                ["W", "Z", 21],
+                ["Z", "Y", 36],
+                ["Y", "V", 51],
+                ["V", "X", 13],
+                ["X", "U", 60]
+             ],
+             color: "lightblue"
+         },
+         {
+             canvasId: "graphCanvas5",
+             edges: [
+             ["U", "W", 35],
+                ["W", "Z", 21],
+                ["Z", "Y", 36],
+                ["Y", "X", 61],
+                ["X", "V", 13],
+                ["V", "U", 51]
+             ],
+             color: "purple"
+         }
+     ];
+
+     // Draw graphs
+     graphData.forEach(({ canvasId, edges, color }) => {
+         drawGraph(canvasId, nodes, edges, color);
+     });
+ </script>
+</body>
+</html>
